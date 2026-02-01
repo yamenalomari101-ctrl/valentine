@@ -33,27 +33,43 @@
       margin-top: 20px;
     }
 
-    button {
-      position: absolute;
-      bottom: 40px;
+    .buttons-wrap{
+      margin: 26px auto 0;
+      width: min(420px, 92%);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      position: relative;
+      z-index: 5;
+    }
+
+    .btn{
+      border: none;
+      cursor: pointer;
       padding: 12px 22px;
       border-radius: 999px;
-      border: none;
       font-size: 16px;
       font-weight: bold;
-      cursor: pointer;
+      transition: transform .18s ease;
     }
 
-    #yesBtn {
+    .btn.yes{
       background: hotpink;
       color: white;
-      left: 30%;
-      transform: scale(1);
+      transform: scale(var(--yesScale, 1));
     }
 
-    #noBtn {
+    .no-slot{
+      width: 140px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .btn.no{
       background: #e0e0e0;
-      left: 55%;
+      color: #111;
+      transform: translateX(var(--noX, 0px));
     }
 
     #hint {
@@ -65,7 +81,6 @@
     }
   </style>
 
-  <!-- ربط الجافاسكربت -->
   <script src="script.js" defer></script>
 </head>
 
@@ -73,8 +88,12 @@
   <div class="card" id="card">
     <h2>Malak, will you be my Valentine? 💖</h2>
 
-    <button id="yesBtn">Yes</button>
-    <button id="noBtn">No</button>
+    <div class="buttons-wrap">
+      <button id="yesBtn" class="btn yes">Yes</button>
+      <div class="no-slot">
+        <button id="noBtn" class="btn no">No</button>
+      </div>
+    </div>
 
     <p id="hint">Try to click “No” 😼</p>
   </div>
