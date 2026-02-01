@@ -5,32 +5,20 @@ const hint = document.getElementById("hint");
 
 let yesScale = 1;
 let noAttempts = 0;
+let dir = 1;
 
-// خلي زر No يهرب داخل الكارد
-function moveNoButton() {
-  const cardRect = card.getBoundingClientRect();
-  const noRect = noBtn.getBoundingClientRect();
-  const pad = 16;
-
-  // حدود الحركة داخل الكارد
-  const minX = pad;
-  const maxX = cardRect.width - noRect.width - pad;
-  const minY = 120; // عشان ما يطلع فوق العنوان
-  const maxY = cardRect.height - noRect.height - 90; // عشان ما ينزل برا
-
-  const x = Math.random() * (maxX - minX) + minX;
-  const y = Math.random() * (maxY - minY) + minY;
-
-  noBtn.style.left = `${x}px`;
-  noBtn.style.top = `${y}px`;
+// حركة زر No يمين / شمال فقط
+function moveNoSideways() {
+  const x = dir * (18 + Math.random() * 22); // 18px إلى 40px
+  dir *= -1;
+  noBtn.style.setProperty("--noX", `${x}px`);
 }
 
-// كبّري زر Yes
+// تكبير زر Yes
 function growYes() {
   noAttempts++;
-  yesScale += 0.22;
-  yesBtn.style.transform = `scale(${yesScale})`;
-  yesBtn.style.zIndex = 10;
+  yesScale = Math.min(yesScale + 0.22, 2.8);
+  yesBtn.style.setProperty("--yesScale", yesScale);
 
   if (hint) {
     const msgs = [
@@ -44,27 +32,27 @@ function growYes() {
   }
 }
 
-// هروب عند الاقتراب (موبايل + كمبيوتر)
-noBtn.addEventListener("mouseenter", moveNoButton);
-noBtn.addEventListener("mouseover", moveNoButton);
+// هروب No
+noBtn.addEventListener("mouseenter", moveNoSideways);
+noBtn.addEventListener("mouseover", moveNoSideways);
+
 noBtn.addEventListener(
   "touchstart",
   (e) => {
     e.preventDefault();
     growYes();
-    moveNoButton();
+    moveNoSideways();
   },
   { passive: false }
 );
 
-// لو قدر يضغط No: كبّر Yes وخلّي No يهرب كمان
 noBtn.addEventListener("click", (e) => {
   e.preventDefault();
   growYes();
-  moveNoButton();
+  moveNoSideways();
 });
 
-// قلوب تطلع
+// قلوب
 function createHeart() {
   const heart = document.createElement("div");
   heart.textContent = "💖";
@@ -78,13 +66,11 @@ function createHeart() {
   setTimeout(() => heart.remove(), 3000);
 }
 
-// لما Yes ينضغط
+// عند الضغط على Yes
 yesBtn.addEventListener("click", () => {
-  // قلوب
   const interval = setInterval(createHeart, 140);
   setTimeout(() => clearInterval(interval), 3000);
 
-  // صفحة النتيجة مع صورة cat-rose.jpg
   card.innerHTML = `
     <div style="display:grid;place-items:center;height:100%;gap:10px">
       <h2 style="margin:0">YAY!!! 💕💞</h2>
@@ -106,8 +92,7 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// أول ما الصفحة تفتح
+// عند تحميل الصفحة
 window.addEventListener("load", () => {
-  moveNoButton();
+  moveNoSideways();
 });
-window.addEventListener("resize", moveNoButton);
