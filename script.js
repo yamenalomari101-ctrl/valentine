@@ -1,89 +1,121 @@
-document.addEventListener("DOMContentLoaded", () => {
+const card = document.getElementById("card");
+const noBtn = document.getElementById("noBtn");
+const yesBtn = document.getElementById("yesBtn");
+const hint = document.getElementById("hint");
 
-  const card = document.getElementById("card");
-  const noBtn = document.getElementById("noBtn");
-  const yesBtn = document.getElementById("yesBtn");
-  const hint = document.getElementById("hint");
+let yesScale = 1;
+let noClicks = 0;
 
-  let yesScale = 1;
-  let noClicks = 0;
+/* =========================
+   زر NO يهرب فقط (ما يكبر)
+========================= */
+function moveNoButton() {
+  const cardRect = card.getBoundingClientRect();
+  const noRect = noBtn.getBoundingClientRect();
+  const pad = 20;
 
-  function moveNoButton() {
-    const cardRect = card.getBoundingClientRect();
-    const noRect = noBtn.getBoundingClientRect();
+  const minX = pad;
+  const maxX = cardRect.width - noRect.width - pad;
+  const minY = 120;
+  const maxY = cardRect.height - noRect.height - 80;
 
-    const maxX = cardRect.width - noRect.width - 20;
-    const maxY = cardRect.height - noRect.height - 80;
+  const x = Math.random() * (maxX - minX) + minX;
+  const y = Math.random() * (maxY - minY) + minY;
 
-    const x = Math.random() * maxX;
-    const y = Math.random() * maxY;
+  noBtn.style.left = `${x}px`;
+  noBtn.style.top = `${y}px`;
+}
 
-    noBtn.style.left = x + "px";
-    noBtn.style.top = y + "px";
-  }
-
-  // يخلي زر No يهرب (موبايل + كمبيوتر)
-  ["mouseenter", "mouseover", "touchstart"].forEach(event => {
-    noBtn.addEventListener(event, (e) => {
-      e.preventDefault();
-      moveNoButton();
-    }, { passive: false });
-  });
-
-  // لما ينكبس No يكبر Yes
-  noBtn.addEventListener("click", () => {
-    noClicks++;
-    yesScale += 0.2;
-    yesBtn.style.transform = `scale(${yesScale})`;
-
-    const msgs = [
-      "No is shy 🙈",
-      "Still no? 😭",
-      "Malak please 😩",
-      "You're teasing 😼",
-      "YES is HUGE 👀"
-    ];
-    hint.textContent = msgs[Math.min(noClicks, msgs.length - 1)];
-
+// لما نقرب أو نلمس زر NO
+noBtn.addEventListener("mouseenter", moveNoButton);
+noBtn.addEventListener(
+  "touchstart",
+  (e) => {
+    e.preventDefault();
     moveNoButton();
-  });
+  },
+  { passive: false }
+);
 
-  // قلوب
-  function heart() {
-    const h = document.createElement("div");
-    h.textContent = "💖";
-    h.style.position = "fixed";
-    h.style.left = Math.random() * 100 + "vw";
-    h.style.bottom = "-20px";
-    h.style.fontSize = "24px";
-    h.style.animation = "floatUp 3s linear";
-    document.body.appendChild(h);
-    setTimeout(() => h.remove(), 3000);
-  }
+/* =========================
+   كل محاولة على NO:
+   YES يكبر ويقرب
+========================= */
+noBtn.addEventListener("click", () => {
+  noClicks++;
 
-  // Yes
-  yesBtn.addEventListener("click", () => {
-    const i = setInterval(heart, 150);
-    setTimeout(() => clearInterval(i), 3000);
+  // YES يكبر
+  yesScale += 0.18;
+  yesBtn.style.transform = `scale(${yesScale})`;
+  yesBtn.style.transition = "transform 0.25s ease";
 
-    card.innerHTML = `
-      <div style="display:grid;place-items:center;height:100%">
-        <h2>YAY!!! 💕</h2>
-        <p style="font-size:20px;">I knew it 😏</p>
-        <img src="https://media.giphy.com/media/v6aOjy0Qo1fIA/giphy.gif"
-             style="width:220px;border-radius:16px;margin:15px 0;">
-        <p>Malak said YES 🌹😼</p>
-      </div>
-    `;
+  const msgs = [
+    "ليش NO؟ 😿",
+    "جربي YES 🙈",
+    "قربت 😏",
+    "YES عم تكبر 👀",
+    "خلص واضح الجواب 😼"
+  ];
 
-    const style = document.createElement("style");
-    style.innerHTML = `
-      @keyframes floatUp {
-        from { transform: translateY(0); opacity: 1; }
-        to { transform: translateY(-100vh); opacity: 0; }
-      }
-    `;
-    document.head.appendChild(style);
-  });
+  hint.textContent = msgs[Math.min(noClicks, msgs.length - 1)];
 
+  moveNoButton();
 });
+
+/* =========================
+   قلوب تطلع
+========================= */
+function createHeart() {
+  const heart = document.createElement("div");
+  heart.textContent = "💖";
+  heart.style.position = "fixed";
+  heart.style.left = Math.random() * 100 + "vw";
+  heart.style.bottom = "-20px";
+  heart.style.fontSize = Math.random() * 20 + 16 + "px";
+  heart.style.animation = "floatUp 3s linear";
+  heart.style.zIndex = "9999";
+
+  document.body.appendChild(heart);
+  setTimeout(() => heart.remove(), 3000);
+}
+
+/* =========================
+   لما YES تنكبس 💕
+========================= */
+yesBtn.addEventListener("click", () => {
+  const interval = setInterval(createHeart, 160);
+  setTimeout(() => clearInterval(interval), 3500);
+
+  card.innerHTML = `
+    <div style="display:grid;place-items:center;height:100%">
+      <h2>YAY!!! 💕</h2>
+      <p style="font-size:20px;">I knew it 😏</p>
+
+      <img
+        src="https://i.imgur.com/6ZQZ6ZP.jpg"
+        alt="Cute cat with flowers"
+        style="
+          width:220px;
+          border-radius:18px;
+          box-shadow:0 10px 25px rgba(0,0,0,.25);
+          margin:18px 0;
+        "
+      />
+
+      <p style="font-size:18px;">Malak said YES 🌹🐱</p>
+    </div>
+  `;
+
+  const style = document.createElement("style");
+  style.innerHTML = `
+    @keyframes floatUp {
+      from { transform: translateY(0); opacity: 1; }
+      to { transform: translateY(-100vh); opacity: 0; }
+    }
+  `;
+  document.head.appendChild(style);
+});
+
+// أول ما الصفحة تفتح
+window.addEventListener("load", moveNoButton);
+window.addEventListener("resize", moveNoButton);
