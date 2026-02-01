@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Will you be my Valentine?</title>
+  <style>
+    :root { --pink:#ff4d7d; --bg:#ffd7e2; --card:#fff; }
+    *{ box-sizing:border-box; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; }
+    body{
+      margin:0; min-height:100vh; display:grid; place-items:center;
+      background: radial-gradient(circle at top, #ffe7ee, var(--bg));
+      padding:24px;
+    }
+    .card{
+      width:min(520px, 92vw);
+      background: var(--card);
+      border-radius:24px;
+      padding:28px 22px;
+      text-align:center;
+      box-shadow: 0 12px 30px rgba(0,0,0,.12);
+      position:relative;
+      overflow:hidden;
+    }
+    .emoji{ font-size:54px; }
+    h1{ margin:10px 0 18px; font-size:22px; line-height:1.4; }
+    .stage{
+      position:relative;
+      height:110px;
+      margin-top:10px;
+    }
+    button{
+      border:0; cursor:pointer; font-weight:800;
+      padding:14px 22px; border-radius:999px;
+      font-size:18px;
+      transition: transform .12s ease, box-shadow .12s ease;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #yes{
+      background: var(--pink);
+      color:#fff;
+      box-shadow: 0 10px 18px rgba(255,77,125,.35);
+    }
+    #yes:active{ transform: scale(.98); }
+    #no{
+      position:absolute;
+      left:62%;
+      top:20px;
+      background:#eee;
+      color:#333;
+      padding:12px 18px;
+      font-weight:700;
+    }
+    .hint{ margin-top:8px; font-size:13px; color:#666; }
+    .yay{
+      display:none;
+      margin-top:14px;
+      font-size:20px;
+      font-weight:900;
+    }
+    .gif{
+      display:none;
+      margin-top:14px;
+      border-radius:16px;
+      width:min(380px, 85%);
+      box-shadow: 0 10px 18px rgba(0,0,0,.15);
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="emoji">😺💘</div>
+    <h1 id="q">Malak, will you be my Valentine?</h1>
+
+    <div class="stage" id="stage">
+      <button id="yes">Yes</button>
+      <button id="no" type="button">No</button>
+    </div>
+
+    <div class="hint" id="hint">Try pressing “No” 😼</div>
+
+    <div class="yay" id="yay">YAY! 🎉💖</div>
+    <img class="gif" id="gif"
+         src="https://media.giphy.com/media/3o6Zt481isNVuQI1l6/giphy.gif"
+         alt="celebration" />
+  </div>
+
+<script>
+  const noBtn = document.getElementById('no');
+  const yesBtn = document.getElementById('yes');
+  const stage = document.getElementById('stage');
+  const yay = document.getElementById('yay');
+  const gif = document.getElementById('gif');
+  const hint = document.getElementById('hint');
+  const q = document.getElementById('q');
+
+  function moveNo() {
+    const s = stage.getBoundingClientRect();
+    const b = noBtn.getBoundingClientRect();
+
+    const maxX = s.width - b.width - 8;
+    const maxY = s.height - b.height - 8;
+
+    const x = Math.max(0, Math.floor(Math.random() * maxX));
+    const y = Math.max(0, Math.floor(Math.random() * maxY));
+
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
+  }
+
+  // Escape before click (mouse) + on touch (mobile)
+  noBtn.addEventListener('mouseenter', moveNo);
+  noBtn.addEventListener('mouseover', moveNo);
+  noBtn.addEventListener('pointerenter', moveNo);
+  noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); moveNo(); }, {passive:false});
+  noBtn.addEventListener('click', moveNo);
+
+  yesBtn.addEventListener('click', () => {
+    yay.style.display = 'block';
+    gif.style.display = 'inline-block';
+    hint.textContent = "I knew it 😌";
+    q.textContent = "Best YES ever 💘";
+    noBtn.style.display = 'none';
+  });
+</script>
+</body>
+</html>
